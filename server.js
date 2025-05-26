@@ -70,6 +70,7 @@ app.get("/api/posts", async (req, res) => {
         p.content,
         p.is_pinned as "isPinned",
         p.likes,
+        p.title 
         p.comments_count as comments,
         p.created_at as "timeAgo",
         c.name as "category"
