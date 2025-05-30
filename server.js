@@ -153,6 +153,8 @@ app.post("/api/posts/:id/like", async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
+    console.log("post id : ", id);
+    console.log("userId : ", userId);
 
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
@@ -168,19 +170,21 @@ app.post("/api/posts/:id/like", async (req, res) => {
         SELECT id FROM likes 
         WHERE post_id = ${id} AND user_id = ${userId}
       `;
-
+      console.log("existingLike : ", existingLike);
       if (existingLike.length > 0) {
         // Unlike: Remove the like and decrease count
         await sql`
           DELETE FROM likes 
           WHERE post_id = ${id} AND user_id = ${userId}
         `;
+        console.log("deleted from likes table ");
         const [updatedPost] = await sql`
           UPDATE posts 
           SET likes = likes - 1 
           WHERE id = ${id}
           RETURNING id, likes
         `;
+        console.log("updatedPost unlike : ", updatedPost);
         return { action: "unliked", likes: updatedPost.likes };
       } else {
         // Like: Add the like and increase count
@@ -188,12 +192,14 @@ app.post("/api/posts/:id/like", async (req, res) => {
           INSERT INTO likes (post_id, user_id, created_at)
           VALUES (${id}, ${userId}, CURRENT_TIMESTAMP)
         `;
+        console.log("added to likes table ");
         const [updatedPost] = await sql`
           UPDATE posts 
           SET likes = likes + 1 
           WHERE id = ${id}
           RETURNING id, likes
         `;
+        console.log("updatedPost like : ", updatedPost);
         return { action: "liked", likes: updatedPost.likes };
       }
     });
