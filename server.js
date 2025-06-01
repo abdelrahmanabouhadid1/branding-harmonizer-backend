@@ -395,6 +395,29 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
+// Get all communities
+app.get("/api/communities", async (req, res) => {
+  try {
+    const communities = await sql`
+      SELECT 
+        id,
+        name,
+        description,
+        type,
+        language,
+        member_count,
+        created_at,
+        updated_at
+      FROM communities
+      ORDER BY created_at DESC
+    `;
+    res.json(communities);
+  } catch (error) {
+    console.error("Error fetching communities:", error);
+    res.status(500).json({ error: "Failed to fetch communities" });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
