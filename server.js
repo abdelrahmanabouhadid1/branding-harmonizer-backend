@@ -54,8 +54,14 @@ async function testConnection() {
 testConnection();
 
 // Get all posts
-app.get("/api/posts", async (req, res) => {
+app.get("/api/communities/:community_id/posts", async (req, res) => {
   try {
+    const { community_id } = req.params;
+
+    if (!community_id) {
+      return res.status(400).json({ error: "Community ID is required" });
+    }
+
     const posts = await sql`
       SELECT 
         p.id,
@@ -74,7 +80,10 @@ app.get("/api/posts", async (req, res) => {
         p.comments_count as comments,
         p.created_at as "timeAgo",
         c.name as "category"
-      FROM posts p join categories c on p.category_id = c.id join users u on p.author_id = u.uid
+      FROM posts p 
+      JOIN categories c on p.category_id = c.id 
+      JOIN users u on p.author_id = u.uid
+      WHERE p.community_id = ${community_id}
       ORDER BY p.is_pinned DESC, p.created_at DESC
     `;
     res.json(posts);
@@ -87,10 +96,15 @@ app.get("/api/posts", async (req, res) => {
 // Create a new post
 app.post("/api/posts", async (req, res) => {
   try {
-    const { content, isPinned, category_id, authorId, title } = req.body;
+    const { content, isPinned, category_id, authorId, title, community_id } = req.body;
+
+    if (!community_id) {
+      return res.status(400).json({ error: "Community ID is required" });
+    }
+
     const [newPost] = await sql`
-      INSERT INTO posts ( content, is_pinned, category_id,author_id,title )
-      VALUES ( ${content}, ${isPinned}, ${category_id},${authorId},${title})
+      INSERT INTO posts (content, is_pinned, category_id, author_id, title, community_id)
+      VALUES (${content}, ${isPinned}, ${category_id}, ${authorId}, ${title}, ${community_id})
       RETURNING *
     `;
     res.json(newPost);
