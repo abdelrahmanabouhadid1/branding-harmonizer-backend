@@ -1,10 +1,10 @@
 import express from "express";
 import sql from "../config/database.js";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // Get all posts for a community
-router.get("/communities/:community_id/posts", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { community_id } = req.params;
 

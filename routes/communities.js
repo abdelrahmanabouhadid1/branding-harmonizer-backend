@@ -1,9 +1,12 @@
 import express from "express";
 import sql from "../config/database.js";
+import postsRouter from "./posts.js";
 
 const router = express.Router();
 
 // Get all communities
+
+router.use("/:community_id/posts", postsRouter);
 router.get("/", async (req, res) => {
   try {
     const communities = await sql`
