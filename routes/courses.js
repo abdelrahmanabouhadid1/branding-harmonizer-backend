@@ -3,6 +3,36 @@ import sql from "../config/database.js";
 
 const router = express.Router();
 
+// Get courses by community ID
+router.get("/community/:community_id", async (req, res) => {
+  try {
+    const { community_id } = req.params;
+
+    if (!community_id) {
+      return res.status(400).json({ error: "Community ID is required" });
+    }
+
+    const courses = await sql`
+      SELECT 
+        c.*,
+        json_build_object(
+          'id', com.id,
+          'name', com.name,
+          'type', com.type
+        ) as community
+      FROM courses c
+      JOIN communities com ON c.community_id = com.id
+      WHERE c.community_id = ${community_id}
+      ORDER BY c.created_at DESC
+    `;
+
+    res.json(courses);
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ error: "Failed to fetch courses" });
+  }
+});
+
 // Create a new course
 router.post("/", async (req, res) => {
   try {
