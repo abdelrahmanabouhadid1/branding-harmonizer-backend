@@ -80,6 +80,19 @@ CREATE TABLE IF NOT EXISTS links (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create courses table
+CREATE TABLE IF NOT EXISTS courses (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    type VARCHAR(10) CHECK (type IN ('paid', 'free')),
+    level VARCHAR(20) CHECK (level IN ('Beginner', 'Intermediate', 'Advanced')),
+    cover_image TEXT,
+    published BOOLEAN DEFAULT false,
+    community_id INTEGER REFERENCES communities(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+);
+
 -- Add foreign key constraints for author_id and user_id
 ALTER TABLE posts
 ADD CONSTRAINT fk_posts_author
