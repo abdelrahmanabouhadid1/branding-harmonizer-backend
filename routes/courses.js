@@ -67,25 +67,36 @@ router.post("/", async (req, res) => {
     }
 
     const [newCourse] = await sql`
-      INSERT INTO courses (
-        name,
-        description,
-        type,
-        level,
-        cover_image,
-        published,
-        community_id
+      WITH inserted_course AS (
+        INSERT INTO courses (
+          name,
+          description,
+          type,
+          level,
+          cover_image,
+          published,
+          community_id
+        )
+        VALUES (
+          ${name},
+          ${description},
+          ${type},
+          ${level},
+          ${cover_image},
+          ${published},
+          ${community_id}
+        )
+        RETURNING *
       )
-      VALUES (
-        ${name},
-        ${description},
-        ${type},
-        ${level},
-        ${cover_image},
-        ${published},
-        ${community_id}
-      )
-      RETURNING *
+      SELECT 
+        ic.*,
+        json_build_object(
+          'id', com.id,
+          'name', com.name,
+          'type', com.type
+        ) as community
+      FROM inserted_course ic
+      JOIN communities com ON ic.community_id = com.id
     `;
 
     res.status(201).json(newCourse);
