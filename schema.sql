@@ -93,6 +93,26 @@ CREATE TABLE IF NOT EXISTS courses (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 );
 
+-- Create coursesFiles table
+CREATE TABLE IF NOT EXISTS coursesFiles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create coursesLessons table
+CREATE TABLE IF NOT EXISTS coursesLessons (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    duration INTEGER,
+    points INTEGER DEFAULT 0,
+    video_url TEXT,
+    content TEXT,
+    file_id INTEGER REFERENCES coursesFiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Add foreign key constraints for author_id and user_id
 ALTER TABLE posts
 ADD CONSTRAINT fk_posts_author

@@ -11,6 +11,8 @@ import usersRouter from "./routes/users.js";
 import categoriesRouter from "./routes/categories.js";
 import communitiesRouter from "./routes/communities.js";
 import coursesRouter from "./routes/courses.js";
+import coursesFilesRouter from "./routes/coursesFiles.js";
+import coursesLessonsRouter from "./routes/coursesLessons.js";
 
 // Load environment variables from .backend.env
 console.log(path.resolve(process.cwd(), ".backend.env"));
@@ -68,6 +70,8 @@ app.use("/api/users", usersRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/communities", communitiesRouter);
 app.use("/api/courses", coursesRouter);
+app.use("/api/files", coursesFilesRouter);
+app.use("/api/lessons", coursesLessonsRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
