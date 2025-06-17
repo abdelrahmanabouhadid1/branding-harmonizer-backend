@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS coursesLessons (
     video_url TEXT,
     content TEXT,
     file_id INTEGER REFERENCES coursesFiles(id) ON DELETE CASCADE,
+    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

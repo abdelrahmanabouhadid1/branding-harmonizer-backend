@@ -18,7 +18,8 @@ router.get("/course/:course_id", async (req, res) => {
         (
           SELECT json_agg(cl.*)
           FROM coursesLessons cl
-          WHERE cl.file_id = cf.id
+          WHERE cl.file_id = cf.id 
+          AND cl.course_id = cf.course_id
         ) as lessons
       FROM coursesFiles cf
       JOIN courses c ON cf.course_id = c.id
@@ -43,15 +44,15 @@ router.post("/", async (req, res) => {
     }
 
     const [newFile] = await sql`
-        INSERT INTO coursesFiles (
-          name,
-          course_id
-        )
-        VALUES (
-          ${name},
-          ${course_id}
-        )
-        RETURNING *
+      INSERT INTO coursesFiles (
+        name,
+        course_id
+      )
+      VALUES (
+        ${name},
+        ${course_id}
+      )
+      RETURNING *
     `;
 
     res.status(201).json(newFile);

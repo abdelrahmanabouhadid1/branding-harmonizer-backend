@@ -6,12 +6,13 @@ const router = express.Router();
 // Create a new lesson
 router.post("/", async (req, res) => {
   try {
-    const { title, duration, points, video_url, content, file_id } = req.body;
+    const { title, duration, points, video_url, content, file_id, course_id } =
+      req.body;
 
-    if (!title || !file_id) {
+    if (!title || !file_id || !course_id) {
       return res
         .status(400)
-        .json({ error: "Title and course_id are required" });
+        .json({ error: "Title, file_id, and course_id are required" });
     }
 
     const [newLesson] = await sql`
@@ -21,7 +22,8 @@ router.post("/", async (req, res) => {
         points,
         video_url,
         content,
-        file_id
+        file_id,
+        course_id
       )
       VALUES (
         ${title},
@@ -29,7 +31,8 @@ router.post("/", async (req, res) => {
         ${points},
         ${video_url},
         ${content},
-        ${file_id}
+        ${file_id},
+        ${course_id}
       )
       RETURNING *
     `;
