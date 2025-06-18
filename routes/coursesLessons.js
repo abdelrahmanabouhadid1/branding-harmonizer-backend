@@ -6,8 +6,7 @@ const router = express.Router();
 // Create a new lesson
 router.post("/", async (req, res) => {
   try {
-    const { title, duration, points, video_url, content, file_id, course_id } =
-      req.body;
+    const { title, duration, points, video_url, content, file_id } = req.body;
 
     if (!title || !file_id || !course_id) {
       return res
@@ -23,7 +22,6 @@ router.post("/", async (req, res) => {
         video_url,
         content,
         file_id,
-        course_id
       )
       VALUES (
         ${title},
@@ -32,7 +30,6 @@ router.post("/", async (req, res) => {
         ${video_url},
         ${content},
         ${file_id},
-        ${course_id}
       )
       RETURNING *
     `;
