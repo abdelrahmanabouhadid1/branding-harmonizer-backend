@@ -39,4 +39,32 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Delete a lesson by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Lesson ID is required" });
+    }
+
+    const [deletedLesson] = await sql`
+      DELETE FROM courseslessons 
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    if (!deletedLesson) {
+      return res.status(404).json({ error: "Lesson not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Lesson deleted successfully", lesson: deletedLesson });
+  } catch (error) {
+    console.error("Error deleting course lesson:", error);
+    res.status(500).json({ error: "Failed to delete course lesson" });
+  }
+});
+
 export default router;
