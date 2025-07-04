@@ -6,7 +6,7 @@ const router = express.Router();
 // Create a new lesson
 router.post("/", async (req, res) => {
   try {
-    const { title, duration, points, video_url, content, file_id } = req.body;
+    const { title, duration, points, content, file_id } = req.body;
 
     if (!title || !file_id) {
       return res.status(400).json({ error: "Title, file_id,  are required" });
@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
         title,
         duration,
         points,
-        video_url,
         content,
         file_id
       )
@@ -25,7 +24,6 @@ router.post("/", async (req, res) => {
         ${title},
         ${duration},
         ${points},
-        ${video_url},
         ${content},
         ${file_id}
       )
