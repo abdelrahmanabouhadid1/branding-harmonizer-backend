@@ -65,4 +65,32 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Update a lesson by ID (excluding file_id)
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, duration, points, content } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
+    }
+
+    const [updatedLesson] = await sql`
+      UPDATE courseslessons
+      SET title = ${title}, duration = ${duration}, points = ${points}, content = ${content}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    if (!updatedLesson) {
+      return res.status(404).json({ error: "Lesson not found" });
+    }
+
+    res.status(200).json(updatedLesson);
+  } catch (error) {
+    console.error("Error updating lesson:", error);
+    res.status(500).json({ error: "Failed to update lesson" });
+  }
+});
+
 export default router;
