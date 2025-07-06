@@ -111,4 +111,32 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Update order_index only
+router.patch("/:id/order", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { order_index } = req.body;
+
+    if (order_index === undefined || order_index === null) {
+      return res.status(400).json({ error: "order_index is required" });
+    }
+
+    const [updatedLesson] = await sql`
+      UPDATE coursesLessons
+      SET order_index = ${order_index}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    if (!updatedLesson) {
+      return res.status(404).json({ error: "Lesson not found" });
+    }
+
+    res.status(200).json(updatedLesson);
+  } catch (error) {
+    console.error("Error updating lesson order:", error);
+    res.status(500).json({ error: "Failed to update lesson order" });
+  }
+});
+
 export default router;
