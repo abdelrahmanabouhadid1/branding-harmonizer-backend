@@ -16,7 +16,7 @@ router.get("/course/:course_id", async (req, res) => {
       SELECT 
         cf.*,
         (
-          SELECT json_agg(cl.*)
+          SELECT json_agg(cl.* ORDER BY cl.order_index ASC)
           FROM coursesLessons cl
           WHERE cl.file_id = cf.id 
         ) as lessons
