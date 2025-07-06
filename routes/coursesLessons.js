@@ -86,7 +86,8 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, duration, points, content, published } = req.body;
+    const { title, duration, points, content, published, order_index } =
+      req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -94,7 +95,7 @@ router.put("/:id", async (req, res) => {
 
     const [updatedLesson] = await sql`
       UPDATE courseslessons
-      SET title = ${title}, duration = ${duration}, points = ${points}, content = ${content}, published = ${published}
+      SET title = ${title}, duration = ${duration}, points = ${points}, content = ${content} ,order_index = ${order_index}, published = ${published}
       WHERE id = ${id}
       RETURNING *
     `;
