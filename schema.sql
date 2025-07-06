@@ -107,10 +107,10 @@ CREATE TABLE IF NOT EXISTS coursesLessons (
     title VARCHAR(255) NOT NULL,
     duration INTEGER,
     points INTEGER DEFAULT 0,
-    video_url TEXT,
     content TEXT,
     file_id INTEGER REFERENCES coursesFiles(id) ON DELETE CASCADE,
-    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+    order_index INTEGER ,
+    published BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

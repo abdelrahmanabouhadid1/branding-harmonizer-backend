@@ -6,11 +6,24 @@ const router = express.Router();
 // Create a new lesson
 router.post("/", async (req, res) => {
   try {
-    const { title, duration, points, content, file_id } = req.body;
+    const {
+      title,
+      duration,
+      points,
+      content,
+      file_id,
+      published = false,
+    } = req.body;
 
     if (!title || !file_id) {
-      return res.status(400).json({ error: "Title, file_id,  are required" });
+      return res.status(400).json({ error: "Title and file_id are required" });
     }
+
+    // Get the count of existing lessons for this file_id to set the order_index
+    const [countResult] = await sql`
+      SELECT COUNT(*) as count FROM coursesLessons WHERE file_id = ${file_id}
+    `;
+    const orderIndex = countResult.count;
 
     const [newLesson] = await sql`
       INSERT INTO coursesLessons (
@@ -18,14 +31,18 @@ router.post("/", async (req, res) => {
         duration,
         points,
         content,
-        file_id
+        file_id,
+        order_index,
+        published
       )
       VALUES (
         ${title},
         ${duration},
         ${points},
         ${content},
-        ${file_id}
+        ${file_id},
+        ${orderIndex},
+        ${published}
       )
       RETURNING *
     `;
@@ -69,7 +86,7 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, duration, points, content } = req.body;
+    const { title, duration, points, content, published } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Title is required" });
@@ -77,7 +94,7 @@ router.put("/:id", async (req, res) => {
 
     const [updatedLesson] = await sql`
       UPDATE courseslessons
-      SET title = ${title}, duration = ${duration}, points = ${points}, content = ${content}
+      SET title = ${title}, duration = ${duration}, points = ${points}, content = ${content}, published = ${published}
       WHERE id = ${id}
       RETURNING *
     `;
